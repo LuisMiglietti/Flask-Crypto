@@ -21,16 +21,16 @@ class FlaskCrypto:
         self.key = app.config.get('AES_CRYPTO_KEY').encode('utf-8')
 
     def encrypt(self, text):
-        if not text:
-            return text
+        if not isinstance(text, str):
+            raise TypeError("text should be a string")
         iv = Random.new().read(AES.block_size)
         cipher = AES.new(self.key, AES.MODE_CBC, iv=iv)
         encrypted_text = cipher.encrypt(pad(iv + text.encode('utf-8'), AES.block_size))
         return base64.b64encode(encrypted_text)
 
     def decrypt(self, cypher_text):
-        if not cypher_text:
-            return cypher_text
+        if not isinstance(cypher_text, str):
+            raise TypeError("cypher_text should be a string")
         decoded = base64.b64decode(cypher_text)
         iv = decoded[:AES.block_size]
         text = decoded[AES.block_size:]
